@@ -2,9 +2,9 @@ package hello.jdbc.service;
 
 import hello.jdbc.domain.Member;
 import hello.jdbc.repository.MemberRepository;
-import hello.jdbc.repository.MemberRepositoryV3;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
@@ -30,7 +30,12 @@ public class MemberServiceV4 {
         Member fromMember = memberRepository.findById(fromId);
         Member toMember = memberRepository.findById(toId);
 
-        memberRepository.update(fromId, fromMember.getMoney()- money);
+        //예시
+        try{
+            memberRepository.update(fromId, fromMember.getMoney()- money);
+        }catch (DuplicateKeyException e) {
+            //복구
+        }
         validation(toMember);
         memberRepository.update(toId, toMember.getMoney() + money);
     }
